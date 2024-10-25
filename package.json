@@ -1,0 +1,32 @@
+{
+  "name": "complianceapi",
+  "version": "1.0.0",
+  "main": "./dist/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc --build && npx nodemon ./dir/app.js",
+    "start": "node ./dir/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "openai": "^4.68.4",
+    "playwright": "^1.48.1",
+    "puppeteer": "^23.6.0",
+    "winston": "^3.15.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.9",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
