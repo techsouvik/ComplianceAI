@@ -16,10 +16,16 @@ This repository contains the Compliance API, a scalable microservice that takes 
 
 ## Live Link 
 
-This a REST API being deployed on Render, [click here](https://gomassign.onrender.com/)
+This a REST API being deployed on Render, [click here](https://complianceai.onrender.com)
 
 ```
-https://gomassign.onrender.com/api/reviews?page=https://2717recovery.com/products/recovery-cream
+cURL Request
+curl --location 'https://complianceai.onrender.com/api/compliance/check' \
+--header 'Content-Type: application/json' \
+--data '{
+    "url":"https://mercury.com/",
+    "policyUrl":"https://stripe.com/docs/treasury/marketing-treasury"
+}'
 ```
 
 Note : The free version of Render is being used and can give a 500 Internal Server Error
@@ -28,10 +34,10 @@ Note : The free version of Render is being used and can give a 500 Internal Serv
 
 ## Project Architecture Diagram
 
-This a Data Flow Diagram, to access [click here](https://utfs.io/f/TJAg477eCsqbm9D4wp6NDwBc0RLi9SXYj7fnIe5hgPbk48sC)
+This a Data Flow Diagram, to access [click here](https://utfs.io/f/TJAg477eCsqbx0ooqgQTeMHhEvzBm0PW4lOx7y9nrFojAqYg)
 
 ```
-https://utfs.io/f/TJAg477eCsqbm9D4wp6NDwBc0RLi9SXYj7fnIe5hgPbk48sC
+https://utfs.io/f/TJAg477eCsqbx0ooqgQTeMHhEvzBm0PW4lOx7y9nrFojAqYg
 ```
 
 
