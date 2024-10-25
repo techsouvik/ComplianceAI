@@ -27,7 +27,7 @@ curl --location 'https://complianceai.onrender.com/api/compliance/check' \
 }'
 ```
 
-Note : The free version of Render is being used and can give a 500 Internal Server Error
+Note : The free version of Render is being used and can give a 500 Internal Server Error or a 502 Bad Gateway Error also.
 
 ---
 
