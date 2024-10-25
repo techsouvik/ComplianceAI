@@ -40,15 +40,14 @@ https://utfs.io/f/TJAg477eCsqbm9D4wp6NDwBc0RLi9SXYj7fnIe5hgPbk48sC
 ## Table of Contents
 
 1. [Installation](#installation)
-2. [Usage](#usage)
-3. [API Endpoints](#api-endpoints)
-4. [Directory](#directory-structure)
-5. [Services](#services)
-6. [Environment Variables](#environment-variables)
-7. [Technologies Used](#technologies-used)
-8. [Logging](#logging)
-9. [Error Handling](#error-handling)
-10. [Future Improvements](#future-improvements)
+2. [API Endpoints](#api-endpoints)
+3. [Directory](#directory-structure)
+4. [Services](#services)
+5. [Environment Variables](#environment-variables)
+6. [Technologies Used](#technologies-used)
+7. [Logging](#logging)
+8. [Error Handling](#error-handling)
+9. [Future Improvements](#future-improvements)
 
 ---
 
@@ -92,54 +91,45 @@ https://utfs.io/f/TJAg477eCsqbm9D4wp6NDwBc0RLi9SXYj7fnIe5hgPbk48sC
 
 ---
 
-## Usage
-
-### Example API Request
-
-You can interact with the API via a simple GET request. Here's an example using `curl`:
-
-```
-curl http://localhost:3000/api/reviews?page=https://example-product-page.com
-```
-
-Alternatively, you can use tools like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/).
-
----
 
 ## API Endpoints
 
-### GET /api/reviews
+### POST /api/compliance/check
 
-This endpoint extracts reviews from a specified product page URL.
+Evaluates a webpage's content against a compliance policy and returns any non-compliant findings.
 
 #### Request
 
-- **Method**: GET
-- **URL Parameter**: `page` (Required) — The URL of the product page to scrape reviews from.
+- **Content-Type**: application/json
+
+##### Body Parameters
+
+- **url**: (String) — The URL of the webpage to check.
+- **policyUrl** (String) — The URL of the compliance policy to compare against. 
 
 Example request:
 
 ```
-GET /api/reviews?page=https://example-product-page.com
+POST /api/compliance/check
+(Body)
+{
+  "url": "https://example.com/page",
+  "policyUrl": "https://example.com/policy"
+}
 ```
 
 #### Response
 
+- **200 OK**: Returns an object with non-compliant findings, if any.
+- **400 Bad Request**: Missing or invalid parameters.
+- **500 Internal Server Error**: An unexpected error occurred.
+
 ```
 {
-  "reviews_count": 100,
-  "reviews": [
+  "nonCompliantFindings": [
     {
-      "title": "Great product!",
-      "body": "I really enjoyed using this cream. Highly recommend.",
-      "rating": 5,
-      "reviewer": "John Doe"
-    },
-    {
-      "title": "Not worth the price",
-      "body": "Didn't work as expected. I would not buy it again.",
-      "rating": 2,
-      "reviewer": "Jane Smith"
+      "finding": "Missing disclaimer",
+      "explanation": "The webpage lacks a required disclaimer as specified in the compliance policy."
     }
   ]
 }
@@ -147,12 +137,10 @@ GET /api/reviews?page=https://example-product-page.com
 
 #### Response Fields
 
-- `reviews_count`: Total number of reviews extracted.
-- `reviews`: Array of reviews, each containing:
-  - `title`: The title of the review.
-  - `body`: The main content of the review.
-  - `rating`: The star rating, typically from 1 to 5.
-  - `reviewer`: The name of the reviewer.
+- `nonCompliantFindings`: All the findings
+  - `finding`: The heading of the non-compliant finding.
+  - `explanation`: description on why it is non-compliant.
+  
 
 ---
 
@@ -183,48 +171,33 @@ complianceAI/
 
 ## Services
 
-### Browser Service
+### Scrape Service
 
-This service handles the navigation to the product page using Puppeteer, fetches the HTML content, and cleans it by removing unnecessary elements (e.g., scripts, images, pop-ups).
+This service handles the navigation to the given url using Puppeteer, fetches the HTML content, and cleans it by removing unnecessary elements (e.g., scripts, images, pop-ups).
 
 ```javascript
-fetchPageContent(url) → { html, metadata }
+etchWebpageContent(url) → html
 ```
 
 - **Parameters**: 
   - `url`: The product page URL.
 - **Returns**: 
-  - Cleaned HTML content and metadata (title and description).
+  - Cleaned HTML content.
 
 ### LLM Service
 
-This service sends the cleaned HTML and metadata to an LLM API to dynamically identify the CSS selectors for the review section and pagination.
+This service sends the urlContent and the policyContent to a LLM API to dynamically find the nonc-compliant features as per the policyContent.
 
 ```javascript
-identifyCssSelectors(html, metadata) → { selectors }
+checkContentAgainstPolicy(pageContent, policyContent) → { findings }
 ```
 
 - **Parameters**:
-  - `html`: Cleaned HTML content.
-  - `metadata`: Page metadata (e.g., title and description).
+  - `pageContent`: Cleaned HTML content of the target page.
+  - `policyContent`: Cleaned HTML content of the policy page
 - **Returns**: 
-  - CSS selectors for review container and pagination.
+  - all the non-compliant findings
 
-### Scraping Service
-
-This service uses the CSS selectors provided by the LLM Service to extract the reviews. It also handles pagination, ensuring all reviews across multiple pages are retrieved.
-
-```javascript
-extractReviews(html, cssSelectors) → [reviews]
-handlePagination(html, cssSelectors, url) → [reviews]
-```
-
-- **Parameters**: 
-  - `html`: HTML content of the product page.
-  - `cssSelectors`: CSS selectors for extracting reviews and pagination.
-  - `url`: Product page URL (for pagination).
-- **Returns**: 
-  - A list of reviews from the page(s).
 
 ---
 
@@ -246,8 +219,6 @@ To get a GEMINI api Key, click [here](https://ai.google.dev/gemini-api/docs/api-
 - **Node.js**: Backend JavaScript runtime.
 - **Express**: Web framework for building the API.
 - **Puppeteer**: For headless browser automation to fetch page content.
-- **Redis**: For inter-service communication and queue management.
-- **Cheerio**: For parsing and querying the HTML.
 - **Winston**: For logging.
 - **Axios**: For making HTTP requests.
 
@@ -269,14 +240,14 @@ By default, logs are written to the root directory of the project.
 The API is designed to handle common errors, including:
 
 1. **Invalid URL**: If the product page URL is not valid or inaccessible, an error message will be returned.
-2. **Failed CSS Selector Identification**: If the LLM fails to identify the correct CSS selectors, the API will return a failure response.
-3. **Pagination Errors**: If pagination fails, the current page's reviews are returned along with an error log.
+2. **Error fetching page content**: If the browser fails to scrap the HTML content, an error message will be returned with log.
+3. **LLM Errors**: If LLM fails or any other conflict ocurs in the LLMService, an error is returned with error log.
 
 Example error response:
 
 ```json
 {
-  "error": "Failed to retrieve reviews"
+  "error": "Error in compliance check"
 }
 ```
 
@@ -284,9 +255,9 @@ Example error response:
 
 ## Future Improvements
 
-- **LLM Service Integration**: Replace the mock LLM service with a live LLM API for CSS selector identification.
+- **LLM Service Integration**: Replace the mock LLM service with a live LLM API for Compliance check.
 - **Error Handling**: Improve error messages for better debugging and clarity.
-- **Support for Additional Review Platforms**: Expand compatibility to handle more e-commerce platforms and custom websites.
+- **Support for Additional Compliance Check Platforms**: Expand compatibility to handle more finance platforms and custom websites.
 - **Storing Data in a Database**: Implementing a database which further stores the cssSelectors for a given website which can later used a cache before requesting the LLM
 
 - **Containerisation**: Implementing Docker and composing it to make an image which will be easy to use
