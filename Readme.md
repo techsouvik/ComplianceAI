@@ -19,7 +19,6 @@ This repository contains the Compliance API, a scalable microservice that takes 
 This a REST API being deployed on Render, [click here](https://complianceai.onrender.com)
 
 ```
-cURL Request
 curl --location 'https://complianceai.onrender.com/api/compliance/check' \
 --header 'Content-Type: application/json' \
 --data '{
