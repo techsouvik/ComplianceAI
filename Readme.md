@@ -84,7 +84,7 @@ https://utfs.io/f/TJAg477eCsqbx0ooqgQTeMHhEvzBm0PW4lOx7y9nrFojAqYg
    ```
    PORT=3000
    LLM_API_KEY = <API KEY for using Google Gemini Model>
-   ```
+   FIRECRAWL_API_KEY = <API KEY for using Firecrawl service>
 
 5. Start the server:
 
