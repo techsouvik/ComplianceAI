@@ -149,6 +149,142 @@ POST /api/compliance/check
 
 ---
 
+## Text Checking API Endpoints
+
+### POST /api/text-check/single
+
+Checks if specific text is present in a single webpage using Firecrawl.
+
+#### Request
+
+- **Content-Type**: application/json
+
+##### Body Parameters
+
+- **url**: (String) — The URL of the webpage to check.
+- **searchText**: (String) — The text to search for in the webpage.
+
+Example request:
+
+```json
+POST /api/text-check/single
+{
+  "url": "https://example.com/page",
+  "searchText": "privacy policy"
+}
+```
+
+#### Response
+
+```json
+{
+  "success": true,
+  "result": {
+    "url": "https://example.com/page",
+    "textFound": true,
+    "extractedText": "First 1000 characters of the page content..."
+  }
+}
+```
+
+### POST /api/text-check/multiple
+
+Checks if specific text is present in multiple webpages (max 20 URLs).
+
+#### Request
+
+##### Body Parameters
+
+- **urls**: (Array) — Array of URLs to check (max 20).
+- **searchText**: (String) — The text to search for.
+
+Example request:
+
+```json
+POST /api/text-check/multiple
+{
+  "urls": [
+    "https://example.com/page1",
+    "https://example.com/page2"
+  ],
+  "searchText": "terms of service"
+}
+```
+
+#### Response
+
+```json
+{
+  "success": true,
+  "summary": {
+    "totalUrls": 2,
+    "urlsWithText": 1,
+    "urlsWithErrors": 0
+  },
+  "results": [
+    {
+      "url": "https://example.com/page1",
+      "textFound": true,
+      "extractedText": "Content preview..."
+    },
+    {
+      "url": "https://example.com/page2",
+      "textFound": false,
+      "extractedText": "Content preview..."
+    }
+  ]
+}
+```
+
+### POST /api/text-check/linked-pages
+
+Extracts links from a base webpage and checks for text presence in those linked pages.
+
+#### Request
+
+##### Body Parameters
+
+- **baseUrl**: (String) — The base URL to extract links from.
+- **searchText**: (String) — The text to search for in linked pages.
+- **maxLinks**: (Number, optional) — Maximum number of links to check (default: 10, max: 50).
+
+Example request:
+
+```json
+POST /api/text-check/linked-pages
+{
+  "baseUrl": "https://example.com",
+  "searchText": "contact us",
+  "maxLinks": 15
+}
+```
+
+#### Response
+
+```json
+{
+  "success": true,
+  "summary": {
+    "baseUrl": "https://example.com",
+    "totalLinksChecked": 15,
+    "linksWithText": 3,
+    "linksWithErrors": 1
+  },
+  "result": {
+    "baseUrl": "https://example.com",
+    "linksChecked": [
+      {
+        "url": "https://example.com/contact",
+        "textFound": true,
+        "extractedText": "Contact us content..."
+      }
+    ]
+  }
+}
+```
+
+
+
 ## Directory Structure
 
 ```
