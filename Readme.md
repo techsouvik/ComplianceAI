@@ -5,8 +5,8 @@ This repository contains the Compliance API, a scalable microservice that takes 
 
 ## Features
 
+- **Text Presence Checking**: Uses Firecrawl to check if specific text is present in web pages and their linked pages.
 - **Content Compliance Evaluation**:  Analyzes website content against specified compliance policies.
-- **Scalable Microservices Architecture**: Enables horizontal scaling to handle large workloads.
 - **Advanced Content Processing**: Uses Google's Generative AI model to generate and interpret complex compliance findings..
 - **Modular Architecture**: Follows microservice and MVC architecture for easy scalability and maintenance.
 - **No Database**: The project does not require a database, with data retrieved directly from the product pages.
